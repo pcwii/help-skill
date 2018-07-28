@@ -55,24 +55,18 @@ class HelpSkill(MycroftSkill):
                     self.example_list.append(each_line)
                 else:
                     print('data not relevant')
-            print(self.description_list)
-            print(self.example_list)
+            print(self.description_list)  # An iterated list of descrption items in the readme file
+            print(self.example_list)  # An iterated list of examples found in the readme file
 
     def get_skills_list(self):  # retrieves a list of skills
-        path = '.'
+        path = 'c:/Users/PhilC/Documents/'
         self.skill_names = []
         self.skill_directories = []
-        files = os.listdir(path)  # Find All Directories
-        for name in files: # Check Each Directory for Skill Match
-            print(name)
-
-    def get_skill_intent_list(self, skill_name):  # retrieves a list of possible commands
-        return self.intents_list
-
-    def get_skill_readme(self, skill_name):
-        # Todo - retrieve the README.md file if it exists for the fields "Description" and "Examples"
-        pass
-
+        for item_name in os.listdir(path):
+            path = os.path.join(path, item_name)
+            if os.path.isdir(path):
+                self.skill_directories.append(path)
+                self.skill_names.append(item_name)
 
     @intent_handler(IntentBuilder('HelpStartIntent').require("HelpKeyword")
                     .build())
