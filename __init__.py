@@ -1,5 +1,5 @@
 from os.path import dirname
-import time
+import os
 
 from adapt.intent import IntentBuilder
 from mycroft.skills.core import MycroftSkill, intent_handler, intent_file_handler
@@ -18,19 +18,29 @@ class HelpSkill(MycroftSkill):
     """
     def __init__(self):
         super(HelpSkill, self).__init__(name="HelpSkill")
-        self.my_skills = []
-        self.skills_list = []
-        self.my_intents = []
+        self.skill_names = []
+        self.skill_directories = []
+        self.skill_intents = []
         self.intents_list = []
 
     def initialize(self):
         self.load_data_files(dirname(__file__))
 
     def get_skills_list(self):  # retrieves a list of skills
-        return self.skills_list
+        path = '.'
+        self.skill_names = []
+        self.skill_directories = []
+        files = os.listdir(path)  # Find All Directories
+        for name in files: # Check Each Directory for Skill Match
+            print(name)
 
     def get_skill_intent_list(self, skill_name):  # retrieves a list of possible commands
         return self.intents_list
+
+    def get_skill_readme(self, skill_name):
+        # Todo - retrieve the README.md file if it exists for the fields "Description" and "Examples"
+        pass
+
 
     @intent_handler(IntentBuilder('HelpStartIntent').require("HelpKeyword")
                     .build())
