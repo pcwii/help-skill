@@ -3,8 +3,9 @@
 Scrapes the skills directory to provide conversational help on installed skills
 
 ## Description 
-Utilize the testing json files to discover intents and provide help on installed skills.
-## Examples 
+This skill will provide discriptive help for the installed skills by scraping the Readme files.
+## Examples
+Todo Add Examples
 ## Conversational Context
 * "hey mycroft:"
 * Request: "help"
