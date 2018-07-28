@@ -18,15 +18,28 @@ class HelpSkill(MycroftSkill):
     """
     def __init__(self):
         super(HelpSkill, self).__init__(name="HelpSkill")
+        self.my_skills = []
+        self.skills_list = []
+        self.my_intents = []
+        self.intents_list = []
 
     def initialize(self):
         self.load_data_files(dirname(__file__))
 
     def get_skills_list(self):  # retrieves a list of skills
-        pass
+        return self.skills_list
 
     def get_skill_intent_list(self, skill_name):  # retrieves a list of possible commands
-        pass
+        return self.intents_list
+
+    @intent_handler(IntentBuilder('HelpStartIntent').require("HelpKeyword")
+                    .build())
+    @adds_context('HelpChat')
+    def handle_help_start_intent(self, message):
+        self.my_skills = self.get_skills_list()
+
+        self.speak_dialog('context', data={"result": ""}, expect_response=True)
+
 
 
 
