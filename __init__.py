@@ -96,9 +96,30 @@ class HelpSkill(MycroftSkill):
     @adds_context('HelpChat')
     def handle_help_start_intent(self, message):
         self.get_skills_list()
-        vocal_response = "i can tell you a bit about the skills installed on your system. I currently detect, " .\
-            + str(self.skill_quantity) + ", installed on your system, would you like to know more about these skills?"
+        vocal_response = ("i can tell you a bit about the skills installed on your system. I currently detect, "
+                          + str(self.skill_quantity) + ", installed on your system, would you like to know more about these skills?")
+        self.speak_dialog("response.modifier", data={"result": vocal_response}, expect_response=True)
+
+    @intent_handler(IntentBuilder('HelpChatIntent').require("YesKeyword").require('HelpChat')
+                    .build())
+    def handle_help_chat_intent(self, message):  # Cancel was spoken, Cancel the list navigation
+        vocal_response = ("let me see if i can help you a bit. I will list each of the, " + str(self.skill_quantity)
+                          + ", installed skills by name, and if you would like more information say, more."
+                          + " if you would like to hear the next skill say, next. To cancel at any time say, cancel")
+
         self.speak_dialog("response.modifier", data={"result": vocal_response}, expect_response=False)
+
+    @intent_handler(IntentBuilder('HelpChatCancelIntent').require("CancelKeyword").require('HelpChat')
+                    .build())
+    @removes_context('HelpChat')
+    def handle_cancel_help_chat_intent(self, message):  # Cancel was spoken, Cancel the list navigation
+        vocal_response = "if you ever need help in the future just say, help."
+        self.speak_dialog("response.modifier", data={"result": vocal_response}, expect_response=False)
+
+    @removes_context('HelpChat')
+    def stop_help_chat(self, message):  # An internal conversational context stoppage was issued
+        vocal_response = "if you ever need help in the future just say, help."
+        self.speak_dialog("response.modifier", data={"result": vocal_response}, expect_response=True)
 
     def stop(self):
         pass
