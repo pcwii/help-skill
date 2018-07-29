@@ -120,7 +120,7 @@ class HelpSkill(MycroftSkill):
     @adds_context('HelpChat')
     def handle_help_chat_decision_intent(self, message):  # A decision was made other than Cancel
         decision_kw = message.data.get('DecisionKeyword.voc')
-        if decision_kw =="moore" then:
+        if decision_kw == "moore":
             decision_kw = "more"
         if decision_kw == "more":
             self.scrape_readme_file(self.skill_directories[self.skill_index])
