@@ -8,6 +8,8 @@ from mycroft.skills.context import adds_context, removes_context
 import re
 import os
 from pathlib import Path
+import random
+
 
 _author__ = 'PCWii'
 # Release - 20180729
@@ -120,12 +122,21 @@ class HelpSkill(MycroftSkill):
         if decision_kw == "more":
             self.scrape_readme_file(self.skill_directories[self.skill_index])
         if decision_kw == "next":
-            self.skill_index += 1
             self.next_help_item()
 
+    @adds_context('HelpChat')
     def next_help_item(self):
-        vocal_response = ("the next item I have information about is, " + self.skill_names[self.skill_index])
+        self.skill_index += 1
+        vocal_response = ("the next item I have information about is, " + self.skill_names[self.skill_index]
+                          + "if you would like more information say, more."
+                          + " if you would like to hear the next skill say, next. To cancel at any time say, cancel")
         self.speak_dialog("response.modifier", data={"result": vocal_response}, expect_response=True)
+
+    @adds_context('HelpChat')
+    def more_help_item(self):
+        for phrase in self.example_list:
+            self.speak_dialog("joining.words", data={"result": phrase}, expect_response=False)
+        self.next_help_item()
 
     @intent_handler(IntentBuilder('HelpChatCancelIntent').require("CancelKeyword").require('HelpChat')
                     .build())
