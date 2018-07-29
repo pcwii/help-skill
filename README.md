@@ -3,9 +3,9 @@
 Scrapes the skills directory to provide conversational help on installed skills
 
 ## Description 
-This skill will provide discriptive help for the installed skills by scraping the Readme files.
+This skill will provide descriptive help for the installed skills by scraping the Readme files.
 ## Examples
-Todo Add Examples
+* "help"
 ## Conversational Context
 * "hey mycroft:"
 * Request: "help"
