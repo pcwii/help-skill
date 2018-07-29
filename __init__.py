@@ -99,8 +99,9 @@ class HelpSkill(MycroftSkill):
     @adds_context('HelpChat')
     def handle_help_start_intent(self, message):  # The user requested help
         self.get_skills_list()
-        vocal_response = ("i can tell you a bit about the skills installed on your system. I currently detect, "
-                          + str(self.skill_quantity) + ", installed on your system, would you like to know more about these skills?")
+        vocal_response = "i can tell you a bit about the skills installed on your system. I currently detect, " + \
+                         str(self.skill_quantity) + \
+                         ", installed on your system, would you like to know more about these skills?"
         self.speak_dialog('response.modifier', data={"result": vocal_response}, expect_response=True)
 
     @intent_handler(IntentBuilder('HelpChatIntent').require("YesKeyword").require('HelpChat')
@@ -108,10 +109,10 @@ class HelpSkill(MycroftSkill):
     @adds_context('HelpChat')
     def handle_help_chat_intent(self, message):  # The user requires more help
         self.skill_index == 0
-        vocal_response = ("let me see if i can help you a bit. I will list each of the, " + str(self.skill_quantity)
-                          + ", installed skills by name, and if you would like more information say, more."
-                          + " if you would like to hear the next skill say, next. To cancel at any time say, cancel"
-                          + " the first one I have information about is, " + self.skill_names[self.skill_index])
+        vocal_response = "let me see if i can help you a bit. I will list each of the, " + str(self.skill_quantity) + \
+                         ", installed skills by name, and if you would like more information say, more." + \
+                         " if you would like to hear the next skill say, next. To cancel at any time say, cancel" + \
+                         " the first one I have information about is, " + self.skill_names[self.skill_index]
         self.speak_dialog('response.modifier', data={"result": vocal_response}, expect_response=True)
 
     @intent_handler(IntentBuilder('HelpChatDecisionIntent').require("DecisionKeyword").require('HelpChat')
@@ -128,9 +129,9 @@ class HelpSkill(MycroftSkill):
     def next_help_item(self):
         self.skill_index += 1
         if self.skill_index < len(self.skill_names):
-            vocal_response = ("the next item I have information about is, " + self.skill_names[self.skill_index]
-                              + "if you would like more information say, more."
-                              + " if you would like to hear the next skill say, next. To cancel at any time say, cancel")
+            vocal_response = "the next item I have information about is, " + self.skill_names[self.skill_index] +\
+                             "if you would like more information say, more." +\
+                             " if you would like to hear the next skill say, next. To cancel at any time say, cancel"
             self.speak_dialog('response.modifier', data={"result": vocal_response}, expect_response=True)
         else:
             self.speak("We have reached the last skill that is installed on the system")
