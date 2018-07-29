@@ -1,4 +1,6 @@
 # testing the parsing of readme files
+# mycroft-cli-client
+
 import re
 import os
 from pathlib import Path
