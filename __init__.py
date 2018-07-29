@@ -8,13 +8,12 @@ from mycroft.skills.context import adds_context, removes_context
 import re
 import os
 from pathlib import Path
-import random
-
 
 _author__ = 'PCWii'
 # Release - 20180729
 
 LOGGER = getLogger(__name__)
+
 
 class HelpSkill(MycroftSkill):
     """
@@ -74,7 +73,8 @@ class HelpSkill(MycroftSkill):
                     print(self.example_list)
         else:
             vocal_response = "I am sorry, I had trouble locating the skills directory"
-            print(vocal_response)
+            self.speak(vocal_response)
+            self.stop_help_chat()
 
     def get_skills_list(self):
         self.skill_directories = []
@@ -117,7 +117,7 @@ class HelpSkill(MycroftSkill):
     @intent_handler(IntentBuilder('HelpChatDecisionIntent').require("DecisionKeyword").require('HelpChat')
                     .build())
     @adds_context('HelpChat')
-    def handle_help_chat_Decision_intent(self, message):  # A decision was made other than Cancel
+    def handle_help_chat_decision_intent(self, message):  # A decision was made other than Cancel
         decision_kw = message.data.get('DecisionKeyword')
         if decision_kw == "more":
             self.scrape_readme_file(self.skill_directories[self.skill_index])
