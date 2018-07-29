@@ -58,8 +58,8 @@ def get_skills_list():
     print(skill_directories)  # For debugging only
     print(skill_names)  # For debugging only
     skill_quantity = len(skill_names)  # The number of skills detected
-    for each_skill in skill_names:  # obtain the description and examples for each of the readme files
-        scrape_readme_file(skill_directories[int(skill_names.index(each_skill))])  # index begins at 0
+#    for each_skill in skill_names:  # obtain the description and examples for each of the readme files
+#        scrape_readme_file(skill_directories[int(skill_names.index(each_skill))])  # index begins at 0
 
 # scrape_readme_file('c:/Users/PhilC/Documents/Kelsey.ai/')
 get_skills_list()
