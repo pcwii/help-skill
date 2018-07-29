@@ -10,7 +10,7 @@ import os
 from pathlib import Path
 
 _author__ = 'PCWii'
-# Release - 20180713
+# Release - 20180729
 
 LOGGER = getLogger(__name__)
 
@@ -119,7 +119,8 @@ class HelpSkill(MycroftSkill):
         decision_kw = message.data.get('DecisionKeyword')
         if decision_kw == "more":
             self.scrape_readme_file(self.skill_directories[self.skill_index])
-
+        if decision_kw == "next":
+            self.skill_index += 1
 
 
         vocal_response = ("let me see if i can help you a bit. I will list each of the, " + str(self.skill_quantity)
