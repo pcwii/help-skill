@@ -108,7 +108,7 @@ class HelpSkill(MycroftSkill):
                     .build())
     @adds_context('HelpChat')
     def handle_help_chat_intent(self, message):  # The user requires more help
-        self.skill_index == 0
+        self.skill_index = 0
         vocal_response = "let me see if i can help you a bit. I will list each of the, " + str(self.skill_quantity) + \
                          ", installed skills by name, and if you would like more information say, more." + \
                          " if you would like to hear the next skill say, next. To cancel at any time say, cancel" + \
@@ -120,6 +120,8 @@ class HelpSkill(MycroftSkill):
     @adds_context('HelpChat')
     def handle_help_chat_decision_intent(self, message):  # A decision was made other than Cancel
         decision_kw = message.data.get('DecisionKeyword')
+        if decision_kw =="moore" then:
+            decision_kw = "more"
         if decision_kw == "more":
             self.scrape_readme_file(self.skill_directories[self.skill_index])
         if decision_kw == "next":
