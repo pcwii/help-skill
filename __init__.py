@@ -121,11 +121,10 @@ class HelpSkill(MycroftSkill):
             self.scrape_readme_file(self.skill_directories[self.skill_index])
         if decision_kw == "next":
             self.skill_index += 1
+            self.next_help_item()
 
-
-        vocal_response = ("let me see if i can help you a bit. I will list each of the, " + str(self.skill_quantity)
-                          + ", installed skills by name, and if you would like more information say, more."
-                          + " if you would like to hear the next skill say, next. To cancel at any time say, cancel")
+    def next_help_item(self):
+        vocal_response = ("the next item I have information about is, " + self.skill_names[self.skill_index])
         self.speak_dialog("response.modifier", data={"result": vocal_response}, expect_response=True)
 
     @intent_handler(IntentBuilder('HelpChatCancelIntent').require("CancelKeyword").require('HelpChat')
