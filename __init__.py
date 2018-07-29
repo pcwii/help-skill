@@ -112,14 +112,14 @@ class HelpSkill(MycroftSkill):
         vocal_response = "let me see if i can help you a bit. I will list each of the, " + str(self.skill_quantity) + \
                          ", installed skills by name, and if you would like more information say, more." + \
                          " if you would like to hear the next skill say, next. To cancel at any time say, cancel" + \
-                         " the first one I have information about is, ," + self.skill_names[self.skill_index]
+                         " the first one I have information about is , " + self.skill_names[self.skill_index]
         self.speak_dialog('response.modifier', data={"result": vocal_response}, expect_response=True)
 
-    @intent_handler(IntentBuilder('HelpChatDecisionIntent').require("DecisionKeyword").require('HelpChat')
+    @intent_handler(IntentBuilder('HelpChatDecisionIntent').require("DecisionKeyword.voc").require('HelpChat')
                     .build())
     @adds_context('HelpChat')
     def handle_help_chat_decision_intent(self, message):  # A decision was made other than Cancel
-        decision_kw = message.data.get('DecisionKeyword')
+        decision_kw = message.data.get('DecisionKeyword.voc')
         if decision_kw =="moore" then:
             decision_kw = "more"
         if decision_kw == "more":
