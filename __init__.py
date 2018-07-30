@@ -9,6 +9,7 @@ from mycroft.audio import wait_while_speaking
 import re
 import os
 from pathlib import Path
+import random
 
 _author__ = 'PCWii'
 # Release - 20180729
@@ -144,9 +145,11 @@ class HelpSkill(MycroftSkill):
 
     @adds_context('HelpChat')
     def more_help_item(self):
+        joining_words = ["you can say, ", "try saying, ", "you may try, ", "use the phrase, ", "try using the phrase, "]
         self.scrape_readme_file(self.skill_directories[self.skill_index])
         for phrase in self.example_list:
-            self.speak_dialog('joining.words', data={"result": phrase}, expect_response=False)
+            joining_phrase = joining_words[random.randint(0, len(joining_words) - 1)]
+            self.speak(joining_phrase + phrase)
             wait_while_speaking()
         self.next_help_item()
 
