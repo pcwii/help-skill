@@ -89,6 +89,8 @@ class HelpSkill(MycroftSkill):
             if os.path.isdir(path):  # if path item is a directory then process
                 self.skill_directories.append(path)  # Directory path list
                 # Todo Need to run the name through regex to remove the "skill" and "-" portions from the "name"
+                # Todo Need to only add directories if they contain the word "skill" and not "fallback"
+                # Todo Since Fallback skills are for unhandled skill intents we don't need to describe them
                 self.skill_names.append(name)  # Skill name list based on the path
         print(self.skill_directories)  # For debugging only
         print(self.skill_names)  # For debugging only
@@ -134,7 +136,7 @@ class HelpSkill(MycroftSkill):
         self.skill_index += 1
         if self.skill_index < len(self.skill_names):
             vocal_response = "the next item I have information about is, " + self.skill_names[self.skill_index] +\
-                             "if you would like more information say, more." +\
+                             ", if you would like more information say, more." +\
                              " if you would like to hear the next skill say, next. To cancel at any time say, cancel"
             self.speak_dialog('response.modifier', data={"result": vocal_response}, expect_response=True)
             wait_while_speaking()
