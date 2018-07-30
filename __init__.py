@@ -87,11 +87,10 @@ class HelpSkill(MycroftSkill):
         for name in os.listdir(location):
             path = os.path.join(location, name)
             if os.path.isdir(path):  # if path item is a directory then process
-                self.skill_directories.append(path)  # Directory path list
-                # Todo Need to run the name through regex to remove the "skill" and "-" portions from the "name"
-                # Todo Need to only add directories if they contain the word "skill" and not "fallback"
-                # Todo Since Fallback skills are for unhandled skill intents we don't need to describe them
-                self.skill_names.append(name)  # Skill name list based on the path
+                if "fallback" not in name:
+                    if "skill" in name:
+                        self.skill_directories.append(path)  # Directory path list
+                        self.skill_names.append(name)  # Skill name list based on the path
         print(self.skill_directories)  # For debugging only
         print(self.skill_names)  # For debugging only
         self.skill_quantity = len(self.skill_names)  # The number of skills detected
