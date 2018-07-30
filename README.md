@@ -1,22 +1,15 @@
 # Help Skill for Mycroft AI
 ## help-skill
 Scrapes the skills directory to provide conversational help on installed skills
+based on the standard skill README.md file layout recomended by the mycroft.ai team.
 
 ## Description 
-This skill will provide descriptive help for the installed skills by scraping the Readme files.
+This skill will provide conversational help for the installed skills by scraping the Readme files for any examples.
 ## Examples
-* "help"
+* "hey mycroft: help"
 ## Conversational Context
-* "hey mycroft:"
-* Request: "help"
-* Response: "What would you like help on? If you would like skill help say, skills."
-* Request: "skills"
-* Response: "I currently have 15 skills installed, would you like me to list them?"
-* Request: "yes / no"
-* Response: "o-k, the first skill i detect is kodi-skill, would you like help on this skill? Say yes for help,
-next for the next skill, or cancel to end my help"
-* Request: "yes"
-* Response: "alright, to operate the kodi skill you may use the following commands..."
+* The help skill uses a complex conversational context sequence to list all the installed skills and provide
+any examples of the selected skill that may be found in the Examples section of the README.md file for the skill.
 ## Credits
 PCWii
 ## Require 
@@ -24,6 +17,6 @@ Tested on platform_picroft (others untested)
 ## Other Requirements
 - [Mycroft](https://docs.mycroft.ai/installing.and.running/installation)
 ## Further Reading
-- [ToDo](https://)
+- None
 ## Installation Notes
-- ToDo
+- msm install https://github.com/pcwii/help-skill.git
