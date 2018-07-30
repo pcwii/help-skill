@@ -123,7 +123,7 @@ class HelpSkill(MycroftSkill):
         if decision_kw == "moore":
             decision_kw = "more"
         if decision_kw == "more":
-            self.scrape_readme_file(self.skill_directories[self.skill_index])
+            self.more_help_item()
         if decision_kw == "next":
             self.next_help_item()
 
@@ -141,6 +141,7 @@ class HelpSkill(MycroftSkill):
 
     @adds_context('HelpChat')
     def more_help_item(self):
+        self.scrape_readme_file(self.skill_directories[self.skill_index])
         for phrase in self.example_list:
             self.speak_dialog('joining.words', data={"result": phrase}, expect_response=False)
         self.next_help_item()
