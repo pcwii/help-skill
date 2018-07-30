@@ -91,11 +91,7 @@ class HelpSkill(MycroftSkill):
                     if "skill" in name:
                         self.skill_directories.append(path)  # Directory path list
                         self.skill_names.append(name)  # Skill name list based on the path
-        print(self.skill_directories)  # For debugging only
-        print(self.skill_names)  # For debugging only
         self.skill_quantity = len(self.skill_names)  # The number of skills detected
-    #    for each_skill in skill_names:  # obtain the description and examples for each of the readme files
-    #        scrape_readme_file(skill_directories[int(skill_names.index(each_skill))])  # index begins at 0
 
     @intent_handler(IntentBuilder('HelpStartIntent').require("HelpKeyword")
                     .build())
