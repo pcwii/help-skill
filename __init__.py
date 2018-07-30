@@ -74,8 +74,8 @@ class HelpSkill(MycroftSkill):
                 if len(self.example_list) > 0:  # The example section contained no information for this skill
                     print(self.example_list)
         else:
-            vocal_response = "I am sorry, I had trouble locating the skills directory"
-            self.speak(vocal_response)
+            self.speak_dialog("location.error", expect_response=False)
+            wait_while_speaking()
             self.stop_help_chat()
 
     def get_skills_list(self):
@@ -136,17 +136,18 @@ class HelpSkill(MycroftSkill):
             self.speak_dialog('response.modifier', data={"result": vocal_response}, expect_response=True)
             wait_while_speaking()
         else:
-            self.speak("We have reached the last skill that is installed on the system")
+            self.speak_dialog("search.end", expect_response=False)
             wait_while_speaking()
             self.stop_help_chat()
 
     @adds_context('HelpChat')
     def more_help_item(self):
-        joining_words = ["you can say, ", "try saying, ", "you may try, ", "use the phrase, ", "try using the phrase, "]
+        # joining_words = ["you can say, ", "try saying, ", "you may try, ", "use the phrase, ", "try using the phrase, "]
         self.scrape_readme_file(self.skill_directories[self.skill_index])
         for phrase in self.example_list:
-            joining_phrase = joining_words[random.randint(0, len(joining_words) - 1)]
-            self.speak(joining_phrase + phrase)
+            # joining_phrase = joining_words[random.randint(0, len(joining_words) - 1)]
+            self.speak_dialog('joining.words', data={"result": phrase}, expect_response=False)
+            # self.speak(joining_phrase + phrase)
             wait_while_speaking()
         self.next_help_item()
 
@@ -154,13 +155,11 @@ class HelpSkill(MycroftSkill):
                     .build())
     @removes_context('HelpChat')
     def handle_cancel_help_chat_intent(self, message):  # Cancel was spoken, Cancel the list navigation
-        vocal_response = "if you ever need help in the future just say, help."
-        self.speak_dialog('response.modifier', data={"result": vocal_response}, expect_response=False)
+        self.speak_dialog('search.end', expect_response=False)
 
     @removes_context('HelpChat')
     def stop_help_chat(self, message):  # An internal conversational context stoppage was issued
-        vocal_response = "if you ever need help in the future just say, help."
-        self.speak_dialog('response.modifier', data={"result": vocal_response}, expect_response=False)
+        self.speak_dialog('search.end', expect_response=False)
 
     def stop(self):
         pass
