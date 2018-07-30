@@ -109,7 +109,7 @@ class HelpSkill(MycroftSkill):
     def handle_help_chat_intent(self, message):  # The user requires more help
         self.skill_index = 0
         self.speak_dialog('help.chat', data={"qty_result": str(self.skill_quantity),
-                                                     "name_result": self.skill_names[self.skill_index]},
+                                             "name_result": self.skill_names[self.skill_index]},
                           expect_response=True)
 
     @intent_handler(IntentBuilder('HelpChatDecisionIntent').require("DecisionKeyword").require('HelpChat')
@@ -128,7 +128,7 @@ class HelpSkill(MycroftSkill):
     def next_help_item(self):
         self.skill_index += 1
         if self.skill_index < len(self.skill_names):
-            self.speak_dialog('next.help', data={"result": self.skill_names[self.skill_index], expect_response=True)
+            self.speak_dialog('next.help', data={"result": self.skill_names[self.skill_index]}, expect_response=True)
             wait_while_speaking()
         else:
             self.speak_dialog("search.end", expect_response=False)
@@ -137,7 +137,6 @@ class HelpSkill(MycroftSkill):
 
     @adds_context('HelpChat')
     def more_help_item(self):
-        # joining_words = ["you can say, ", "try saying, ", "you may try, ", "use the phrase, ", "try using the phrase, "]
         self.scrape_readme_file(self.skill_directories[self.skill_index])
         for phrase in self.example_list:
             # joining_phrase = joining_words[random.randint(0, len(joining_words) - 1)]
