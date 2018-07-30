@@ -4,6 +4,7 @@ from adapt.intent import IntentBuilder
 from mycroft.skills.core import MycroftSkill, intent_handler, intent_file_handler
 from mycroft.util.log import getLogger
 from mycroft.skills.context import adds_context, removes_context
+from mycroft.audio import wait_while_speaking
 
 import re
 import os
@@ -135,8 +136,10 @@ class HelpSkill(MycroftSkill):
                              "if you would like more information say, more." +\
                              " if you would like to hear the next skill say, next. To cancel at any time say, cancel"
             self.speak_dialog('response.modifier', data={"result": vocal_response}, expect_response=True)
+            wait_while_speaking()
         else:
             self.speak("We have reached the last skill that is installed on the system")
+            wait_while_speaking()
             self.stop_help_chat()
 
     @adds_context('HelpChat')
@@ -144,6 +147,7 @@ class HelpSkill(MycroftSkill):
         self.scrape_readme_file(self.skill_directories[self.skill_index])
         for phrase in self.example_list:
             self.speak_dialog('joining.words', data={"result": phrase}, expect_response=False)
+            wait_while_speaking()
         self.next_help_item()
 
     @intent_handler(IntentBuilder('HelpChatCancelIntent').require("CancelKeyword").require('HelpChat')
