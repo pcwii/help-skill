@@ -96,25 +96,26 @@ class HelpSkill(MycroftSkill):
     @intent_handler(IntentBuilder('HelpStartIntent').require("HelpKeyword")
                     .build())
     @adds_context('HelpChat')
+    @removes_context('SearchChat')
     def handle_help_start_intent(self, message):  # The user requested help
         self.get_skills_list()
-        vocal_response = "i can tell you a bit about the skills installed on your system. I currently detect, " + \
-                         str(self.skill_quantity) + \
-                         ", installed on your system, would you like to know more about these skills?"
-        self.speak_dialog('response.modifier', data={"result": vocal_response}, expect_response=True)
+        self.speak_dialog('help.start', data={"result": str(self.skill_quantity)}, expect_response=True)
 
     @intent_handler(IntentBuilder('HelpChatIntent').require("YesKeyword").require('HelpChat')
                     .build())
     @adds_context('HelpChat')
+    @removes_context('SearchChat')
     def handle_help_chat_intent(self, message):  # The user requires more help
         self.skill_index = 0
         self.speak_dialog('help.chat', data={"qty_result": str(self.skill_quantity),
                                              "name_result": self.skill_names[self.skill_index]},
                           expect_response=True)
+        wait_while_speaking()
 
     @intent_handler(IntentBuilder('HelpChatDecisionIntent').require("DecisionKeyword").require('HelpChat')
                     .build())
     @adds_context('HelpChat')
+    @removes_context('SearchChat')
     def handle_help_chat_decision_intent(self, message):  # A decision was made other than Cancel
         decision_kw = message.data.get('DecisionKeyword')
         if decision_kw == "moore":
@@ -123,8 +124,27 @@ class HelpSkill(MycroftSkill):
             self.more_help_item()
         if decision_kw == "next":
             self.next_help_item()
+        if decision_kw == "search":
+            self.search_help_item()
+
+    @intent_handler(IntentBuilder('SearchHelpIntent').require('SearchChat')
+                    .build())
+    @removes_context('HelpChat')
+    @removes_context('SearchChat')
+    def handle_search_help_intent(self, message):  # A decision was made other than Cancel
+        remainder = message.utterance_remainder()
+        remainder.replace('skill', '')
+        for each_skill in self.skill_names:
+            if remainder in each_skill:
+                self.skill_index = self.skill_names.index(each_skill)
+                self.read_search_help_item()
+            else:
+                self.speak_dialog('location.error', data={"result": remainder},
+                                  expect_response=False)
+                wait_while_speaking()
 
     @adds_context('HelpChat')
+    @removes_context('SearchChat')
     def next_help_item(self):
         self.skill_index += 1
         if self.skill_index < len(self.skill_names):
@@ -136,14 +156,27 @@ class HelpSkill(MycroftSkill):
             self.stop_help_chat()
 
     @adds_context('HelpChat')
+    @removes_context('SearchChat')
     def more_help_item(self):
         self.scrape_readme_file(self.skill_directories[self.skill_index])
         for phrase in self.example_list:
-            # joining_phrase = joining_words[random.randint(0, len(joining_words) - 1)]
             self.speak_dialog('joining.words', data={"result": phrase}, expect_response=False)
-            # self.speak(joining_phrase + phrase)
             wait_while_speaking()
         self.next_help_item()
+
+    @removes_context('HelpChat')
+    @removes_context('SearchChat')
+    def read_search_help_item(self):
+        self.scrape_readme_file(self.skill_directories[self.skill_index])
+        for phrase in self.example_list:
+            self.speak_dialog('joining.words', data={"result": phrase}, expect_response=False)
+            wait_while_speaking()
+
+    @removes_context('HelpChat')
+    @adds_context('SearchChat')
+    def search_help_item(self):
+        self.speak_dialog('search.for', expect_response=True)
+        wait_while_speaking()
 
     @intent_handler(IntentBuilder('HelpChatCancelIntent').require("CancelKeyword").require('HelpChat')
                     .build())
