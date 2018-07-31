@@ -9,7 +9,6 @@ from mycroft.audio import wait_while_speaking
 import re
 import os
 from pathlib import Path
-import random
 
 _author__ = 'PCWii'
 # Release - 20180729
