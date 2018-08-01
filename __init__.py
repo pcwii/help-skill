@@ -126,13 +126,13 @@ class HelpSkill(MycroftSkill):
         if decision_kw == "search":
             self.search_help_item()
 
-    @intent_handler(IntentBuilder('SearchHelpIntent').require('SearchChat').require('SkillKeyword')
+    @intent_handler(IntentBuilder('SearchHelpIntent').require('SearchChat').require('SkillName')
                     .build())
     @removes_context('HelpChat')
     @removes_context('SearchChat')
     def handle_search_help_intent(self, message):  # A decision was made other than Cancel
         # remainder = message.utterance_remainder()
-        remainder = message.data.get('SkillKeyword')
+        remainder = message.data.get('SkillName')
         remainder.replace('skill', '')
         if "cancel" in remainder:
             self.stop_help_chat()
