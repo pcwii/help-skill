@@ -133,14 +133,16 @@ class HelpSkill(MycroftSkill):
     def handle_search_help_intent(self, message):  # A decision was made other than Cancel
         remainder = message.utterance_remainder()
         remainder.replace('skill', '')
-        for each_skill in self.skill_names:
-            if remainder in each_skill:
-                self.skill_index = self.skill_names.index(each_skill)
-                self.read_search_help_item()
-            else:
-                self.speak_dialog('location.error', data={"result": remainder},
-                                  expect_response=False)
-                wait_while_speaking()
+        if "cancel" in remainder:
+            self.stop_help_chat()
+        else:
+            for each_skill in self.skill_names:
+                if remainder in each_skill:
+                    self.skill_index = self.skill_names.index(each_skill)
+                    self.read_search_help_item()
+                else:
+                    self.speak_dialog('location.error', data={"result": remainder}, expect_response=False)
+                    wait_while_speaking()
 
     @adds_context('HelpChat')
     @removes_context('SearchChat')
