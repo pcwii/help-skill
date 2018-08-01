@@ -1,1 +1,1 @@
-search (?P<SkillName>.*)
+(?P<SkillName>.*)
