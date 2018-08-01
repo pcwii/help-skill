@@ -181,11 +181,11 @@ class HelpSkill(MycroftSkill):
                     .build())
     @removes_context('HelpChat')
     def handle_cancel_help_chat_intent(self, message):  # Cancel was spoken, Cancel the list navigation
-        self.speak_dialog('search.end', expect_response=False)
+        self.speak_dialog('search.cancel', expect_response=False)
 
     @removes_context('HelpChat')
     def stop_help_chat(self, message):  # An internal conversational context stoppage was issued
-        self.speak_dialog('search.end', expect_response=False)
+        self.speak_dialog('search.cancel', expect_response=False)
 
     def stop(self):
         pass
