@@ -1,1 +1,1 @@
-(?P<SkillName>.*)
+search (?P<SkillName>.*)
