@@ -127,7 +127,7 @@ class HelpSkill(MycroftSkill):
             self.search_help_item()
 
     @intent_handler(IntentBuilder('SearchHelpIntent').require('SearchChat').require('SkillName')
-                    .build())
+                    .build())  # regex searches must reference the regex search term not the rx filename
     @removes_context('SearchChat')
     def handle_search_help_intent(self, message):  # A decision was made other than Cancel
         # search_skill = message.utterance_remainder()
