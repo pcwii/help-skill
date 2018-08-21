@@ -152,8 +152,8 @@ class HelpSkill(MycroftSkill):
     def next_help_item(self):
         self.skill_index += 1
         LOGGER.info('--LOG(next_help_item)--')
-        LOGGER.info('skill index: ' + self.skill_index)
-        LOGGER.info('skill length: ' + len(self.skill_names))
+        LOGGER.info('skill index: ' + str(self.skill_index))
+        LOGGER.info('skill length: ' + str(len(self.skill_names)))
         LOGGER.info('--END LOGGING--')
         if self.skill_index < len(self.skill_names):
             self.speak_dialog('next.help', data={"result": self.skill_names[self.skill_index]}, expect_response=True)
