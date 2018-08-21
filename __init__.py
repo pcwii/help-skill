@@ -193,7 +193,7 @@ class HelpSkill(MycroftSkill):
         self.speak_dialog('search.cancel', expect_response=False)
 
     @removes_context('HelpChat')
-    def stop_help_chat(self, message):  # An internal conversational context stoppage was issued
+    def stop_help_chat(self):  # An internal conversational context stoppage was issued
         self.speak_dialog('search.cancel', expect_response=False)
 
     def stop(self):
