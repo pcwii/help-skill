@@ -130,7 +130,10 @@ class HelpSkill(MycroftSkill):
                     .build())  # regex searches must reference the regex search term not the rx filename
     @removes_context('SearchChat')
     def handle_search_help_intent(self, message):  # A decision was made other than Cancel
-        # search_skill = message.utterance_remainder()
+        LOGGER.info('--LOG(handle_search_help_intent)--')
+        LOGGER.info('--')
+        LOGGER.info(message.data.get('SkillName'))
+        LOGGER.info('--END LOGGING--')
         search_skill = message.data.get('SkillName')
         search_skill.replace('skill', '')
         if "cancel" in search_skill:
@@ -148,6 +151,10 @@ class HelpSkill(MycroftSkill):
     @removes_context('SearchChat')
     def next_help_item(self):
         self.skill_index += 1
+        LOGGER.info('--LOG(next_help_item)--')
+        LOGGER.info('skill index: ' + self.skill_index)
+        LOGGER.info('skill length: ' + len(self.skill_names))
+        LOGGER.info('--END LOGGING--')
         if self.skill_index < len(self.skill_names):
             self.speak_dialog('next.help', data={"result": self.skill_names[self.skill_index]}, expect_response=True)
             wait_while_speaking()
