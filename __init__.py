@@ -189,7 +189,7 @@ class HelpSkill(MycroftSkill):
     @intent_handler(IntentBuilder('HelpChatCancelIntent').require("CancelKeyword").require('HelpChat')
                     .build())
     @removes_context('HelpChat')
-    def handle_cancel_help_chat_intent(self, message):  # Cancel was spoken, Cancel the list navigation
+    def handle_cancel_help_chat_intent(self):  # Cancel was spoken, Cancel the list navigation
         self.speak_dialog('search.cancel', expect_response=False)
 
     @removes_context('HelpChat')
