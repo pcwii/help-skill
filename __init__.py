@@ -114,7 +114,7 @@ class HelpSkill(MycroftSkill):
     @intent_handler(IntentBuilder('HelpChatDecisionIntent').require("DecisionKeyword").require('HelpChat')
                     .build())
     @adds_context('HelpChat')
-    @removes_context('SearchChat')
+    @adds_context('SearchChat')
     def handle_help_chat_decision_intent(self, message):  # A decision was made other than Cancel
         decision_kw = message.data.get('DecisionKeyword')
         if decision_kw == "moore":
@@ -189,10 +189,12 @@ class HelpSkill(MycroftSkill):
     @intent_handler(IntentBuilder('HelpChatCancelIntent').require("CancelKeyword").require('HelpChat')
                     .build())
     @removes_context('HelpChat')
+    @removes_context('SearchChat')
     def handle_cancel_help_chat_intent(self):  # Cancel was spoken, Cancel the list navigation
         self.speak_dialog('search.cancel', expect_response=False)
 
     @removes_context('HelpChat')
+    @removes_context('SearchChat')
     def stop_help_chat(self):  # An internal conversational context stoppage was issued
         self.speak_dialog('search.cancel', expect_response=False)
 
