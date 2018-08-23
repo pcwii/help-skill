@@ -192,7 +192,7 @@ class HelpSkill(MycroftSkill):
 #        if "cancel" in request_skill:
 #            self.stop_help_chat()
 #        else:
-        if not request_skill
+        if not request_skill:
             for each_skill in self.skill_names:
                 if request_skill in each_skill:
                     self.skill_index = self.skill_names.index(each_skill)
