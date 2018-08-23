@@ -185,8 +185,8 @@ class HelpSkill(MycroftSkill):
     # @adds_context('SearchChat')
     def search_help_item(self):
         # self.speak_dialog('search.for', expect_response=True)
-        request_skill = self.get_response('search.for')
         LOGGER.info('--LOG(search_help_item)--')
+        request_skill = self.get_response('search.for')
         LOGGER.info('request_skill: ' + str(request_skill))
         LOGGER.info('--END LOGGING--')
         if "cancel" in request_skill:
@@ -200,12 +200,12 @@ class HelpSkill(MycroftSkill):
                     self.speak_dialog('location.error', data={"result": search_skill}, expect_response=False)
                     wait_while_speaking()
 
-    @intent_handler(IntentBuilder('HelpChatCancelIntent').require("CancelKeyword").require('HelpChat')
-                    .build())
-    @removes_context('HelpChat')
-    @removes_context('SearchChat')
-    def handle_cancel_help_chat_intent(self,message):  # Cancel was spoken, Cancel the list navigation
-        self.speak_dialog('search.cancel', expect_response=False)
+#    @intent_handler(IntentBuilder('HelpChatCancelIntent').require("CancelKeyword").require('HelpChat')
+#                    .build())
+#    @removes_context('HelpChat')
+#    @removes_context('SearchChat')
+#    def handle_cancel_help_chat_intent(self,message):  # Cancel was spoken, Cancel the list navigation
+#        self.speak_dialog('search.cancel', expect_response=False)
 
     @removes_context('HelpChat')
     @removes_context('SearchChat')
