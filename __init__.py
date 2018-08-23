@@ -95,7 +95,6 @@ class HelpSkill(MycroftSkill):
     @intent_handler(IntentBuilder('HelpStartIntent').require("HelpKeyword")
                     .build())
     @adds_context('HelpChat')
-    @removes_context('SearchChat')
     def handle_help_start_intent(self, message):  # The user requested help
         self.get_skills_list()
         self.speak_dialog('help.start', data={"result": str(self.skill_quantity)}, expect_response=True)
@@ -103,7 +102,6 @@ class HelpSkill(MycroftSkill):
     @intent_handler(IntentBuilder('HelpChatIntent').require("YesKeyword").require('HelpChat')
                     .build())
     @adds_context('HelpChat')
-    @removes_context('SearchChat')
     def handle_help_chat_intent(self, message):  # The user requires more help
         self.skill_index = 0
         self.speak_dialog('help.chat', data={"qty_result": str(self.skill_quantity),
@@ -181,10 +179,23 @@ class HelpSkill(MycroftSkill):
             wait_while_speaking()
 
     @removes_context('HelpChat')
-    @adds_context('SearchChat')
+    # @adds_context('SearchChat')
     def search_help_item(self):
-        self.speak_dialog('search.for', expect_response=True)
-        wait_while_speaking()
+        # self.speak_dialog('search.for', expect_response=True)
+        request_skill = self.get_response('search.for.dialog')
+        LOGGER.info('--LOG(search_help_item)--')
+        LOGGER.info('request_skill: ' + str(request_skill))
+        LOGGER.info('--END LOGGING--')
+        if "cancel" in request_skill:
+            self.stop_help_chat()
+        else:
+            for each_skill in self.skill_names:
+                if request_skill in each_skill:
+                    self.skill_index = self.skill_names.index(each_skill)
+                    self.read_search_help_item()
+                else:
+                    self.speak_dialog('location.error', data={"result": search_skill}, expect_response=False)
+                    wait_while_speaking()
 
     @intent_handler(IntentBuilder('HelpChatCancelIntent').require("CancelKeyword").require('HelpChat')
                     .build())
@@ -196,7 +207,7 @@ class HelpSkill(MycroftSkill):
     @removes_context('HelpChat')
     @removes_context('SearchChat')
     def stop_help_chat(self):  # An internal conversational context stoppage was issued
-        self.speak_dialog('search.cancel', expect_response=False)
+        self.speak_dialog('search.stop', expect_response=False)
 
     def stop(self):
         pass
