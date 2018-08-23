@@ -182,7 +182,7 @@ class HelpSkill(MycroftSkill):
     # @adds_context('SearchChat')
     def search_help_item(self):
         # self.speak_dialog('search.for', expect_response=True)
-        request_skill = self.get_response('search.for.dialog')
+        request_skill = self.get_response('search.for')
         LOGGER.info('--LOG(search_help_item)--')
         LOGGER.info('request_skill: ' + str(request_skill))
         LOGGER.info('--END LOGGING--')
