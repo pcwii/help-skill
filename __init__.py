@@ -205,6 +205,7 @@ class HelpSkill(MycroftSkill):
                 #    self.speak_dialog('location.error', data={"result": request_skill}, expect_response=False)
                 #    wait_while_speaking()
         LOGGER.info('--END LOGGING--')
+
     @intent_handler(IntentBuilder('HelpChatCancelIntent').require("CancelKeyword").require('HelpChat')
                     .build())
     @removes_context('HelpChat')
