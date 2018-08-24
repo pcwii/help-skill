@@ -184,6 +184,7 @@ class HelpSkill(MycroftSkill):
     @removes_context('HelpChat')
     # @adds_context('SearchChat')
     def search_help_item(self):
+        request_skill = ""
         # self.speak_dialog('search.for', expect_response=True)
         LOGGER.info('--LOG(search_help_item)--')
         request_skill = self.get_response('search.for')
@@ -196,12 +197,13 @@ class HelpSkill(MycroftSkill):
             LOGGER.info('get_response returned NONE')
         else:
             for each_skill in self.skill_names:
+                LOGGER.info('Checking skill: ' + str(request_skill))
                 if request_skill in each_skill:
                     self.skill_index = self.skill_names.index(each_skill)
                     self.read_search_help_item()
-                else:
-                    self.speak_dialog('location.error', data={"result": request_skill}, expect_response=False)
-                    wait_while_speaking()
+                # else:
+                #    self.speak_dialog('location.error', data={"result": request_skill}, expect_response=False)
+                #    wait_while_speaking()
         LOGGER.info('--END LOGGING--')
     @intent_handler(IntentBuilder('HelpChatCancelIntent').require("CancelKeyword").require('HelpChat')
                     .build())
