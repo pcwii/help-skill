@@ -198,7 +198,7 @@ class HelpSkill(MycroftSkill):
                     self.skill_index = self.skill_names.index(each_skill)
                     self.read_search_help_item()
                 else:
-                    self.speak_dialog('location.error', data={"result": search_skill}, expect_response=False)
+                    self.speak_dialog('location.error', data={"result": request_skill}, expect_response=False)
                     wait_while_speaking()
 
     @intent_handler(IntentBuilder('HelpChatCancelIntent').require("CancelKeyword").require('HelpChat')
