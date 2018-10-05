@@ -139,7 +139,7 @@ class HelpSkill(MycroftSkill):
     def handle_help_chat_decision_intent(self, message):  # A decision was made other than Cancel
         self.set_context('HelpListContextKeyword', 'HelpListContext')
         decision_kw = message.data.get('DecisionKeyword')
-        LOGGER.info('--LOG(hendle_help_chat_decision_intent)--')
+        LOGGER.info('--LOG(handle_help_chat_decision_intent)--')
         LOGGER.info('decision_kw: ' + str(decision_kw))
         LOGGER.info('--END LOGGING--')
         if any([decision_kw == "moore", decision_kw == "more"]):
