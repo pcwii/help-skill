@@ -5,6 +5,7 @@ from mycroft.skills.core import MycroftSkill, intent_handler, intent_file_handle
 from mycroft.util.log import getLogger
 from mycroft.skills.context import adds_context, removes_context
 from mycroft.audio import wait_while_speaking
+from mycroft.util.log import LOG
 
 import re
 import os
@@ -19,7 +20,7 @@ LOGGER = getLogger(__name__)
 class HelpSkill(MycroftSkill):
     """
     Scrapes the skills directory to provide conversational help on installed skills
-    Utilize the testing json files to discover intents and provide help on installed skills.
+    Utilize the readme.me files to discover intents and provide help on installed skills.
     """
     def __init__(self):
         super(HelpSkill, self).__init__(name="HelpSkill")
@@ -36,6 +37,7 @@ class HelpSkill(MycroftSkill):
         self.load_data_files(dirname(__file__))
 
     def scrape_readme_file(self, file_path):
+        LOG.info('Help Skill Scraping: ' + str(file_path))
         file_name = 'README.md'
         self.description_data = False
         self.description_list = []
@@ -50,11 +52,11 @@ class HelpSkill(MycroftSkill):
                         if re.search('Description', each_line, re.I):  # start of the Description section
                             self.description_data = True
                             self.example_data = False
-                        # print('Found Description')
+                            LOG.info('Found Description')
                         elif re.search('Examples', each_line, re.I):  # start of the Examples section
                             self.example_data = True
                             self.description_data = False
-                            # print('Found Examples')
+                            LOG.info('Found Examples')
                         else:  # some other section was detected end processing
                             self.description_data = False
                             self.example_data = False
@@ -69,9 +71,9 @@ class HelpSkill(MycroftSkill):
                         if len(each_line) > 0:
                             self.example_list.append(each_line)
                 if len(self.description_list) > 0:  # The description section contained no information for this skill
-                    print(self.description_list)
+                    LOG.info(str(self.description_list))
                 if len(self.example_list) > 0:  # The example section contained no information for this skill
-                    print(self.example_list)
+                    LOG.info(str(self.example_list))
         else:
             self.speak_dialog("location.error", expect_response=False)
             wait_while_speaking()
@@ -88,68 +90,65 @@ class HelpSkill(MycroftSkill):
             if os.path.isdir(path):  # if path item is a directory then process
                 if "fallback" not in name:
                     if "skill" in name:
+                        LOG.info('NOTICE: get_skills_list will only get skills that contain "skill" in the name and '
+                                 'are not "fallback" skills')
                         self.skill_directories.append(path)  # Directory path list
                         self.skill_names.append(name)  # Skill name list based on the path
         self.skill_quantity = len(self.skill_names)  # The number of skills detected
 
     @intent_handler(IntentBuilder('HelpStartIntent').require("HelpKeyword")
                     .build())
-    @adds_context('HelpChat')
     def handle_help_start_intent(self, message):  # The user requested help
+        LOG.info('Help Skill Initiated')
+        self.set_context('HelpStartContextKeyword', 'HelpStartContext')
         self.get_skills_list()
         self.speak_dialog('help.start', data={"result": str(self.skill_quantity)}, expect_response=True)
 
-    @intent_handler(IntentBuilder('HelpChatIntent').require("YesKeyword").require('HelpChat')
+    @intent_handler(IntentBuilder('HelpChatYesIntent').require('HelpStartContextKeyword').require("YesKeyword")
                     .build())
-    @adds_context('HelpChat')
-    def handle_help_chat_intent(self, message):  # The user requires more help
+    def handle_help_chat_yes_intent(self, message):  # The user requires more help
+        LOG.info('The user requested more information about the installed skills')
+        self.set_context('HelpStartContextKeyword', '')
+        self.set_context('HelpListContextKeyword', 'HelpListContext')
         self.skill_index = 0
         self.speak_dialog('help.chat', data={"qty_result": str(self.skill_quantity),
                                              "name_result": self.skill_names[self.skill_index]},
                           expect_response=True)
         wait_while_speaking()
 
-    @intent_handler(IntentBuilder('HelpChatDecisionIntent').require("DecisionKeyword").require('HelpChat')
+    @intent_handler(IntentBuilder('HelpChatNoIntent').require('HelpStartContextKeyword').require("CancelKeyword")
                     .build())
-    @adds_context('HelpChat')
-    @adds_context('SearchChat')
+    def handle_help_chat_no_intent(self, message):  # The user requires more help
+        LOG.info('The user requested a cancel')
+        self.set_context('HelpStartContextKeyword', '')
+        self.skill_index = 0
+        self.speak_dialog('search.cancel', expect_response=False)
+        wait_while_speaking()
+
+    @intent_handler(IntentBuilder('HelpListCancelIntent').require('HelpListContextKeyword').require("CancelKeyword")
+                    .build())
+    def handle_help_list_cancel_intent(self, message):  # The user requires more help
+        LOG.info('The user requested a cancel')
+        self.set_context('HelpListContextKeyword', '')
+        self.skill_index = 0
+        self.speak_dialog('search.cancel', expect_response=False)
+        wait_while_speaking()
+
+    @intent_handler(IntentBuilder('HelpChatDecisionIntent').require('HelpListContextKeyword')
+                    .require("DecisionKeyword").build())
     def handle_help_chat_decision_intent(self, message):  # A decision was made other than Cancel
+        self.set_context('HelpListContextKeyword', 'HelpListContext')
         decision_kw = message.data.get('DecisionKeyword')
         LOGGER.info('--LOG(hendle_help_chat_decision_intent)--')
         LOGGER.info('decision_kw: ' + str(decision_kw))
         LOGGER.info('--END LOGGING--')
-        if decision_kw == "moore":
-            decision_kw = "more"
-        if decision_kw == "more":
+        if any([decision_kw == "moore", decision_kw == "more"]):
             self.more_help_item()
         if decision_kw == "next":
             self.next_help_item()
         if decision_kw == "search":
-            self.search_help_item()
+            self.search_help_request_item()
 
-    # @intent_handler(IntentBuilder('SearchHelpIntent').require('SearchChat').require('SkillName')
-    #                .build())  # regex searches must reference the regex search term not the rx filename
-    # @removes_context('SearchChat')
-    # def handle_search_help_intent(self, message):  # A decision was made other than Cancel
-    #     LOGGER.info('--LOG(handle_search_help_intent)--')
-    #     LOGGER.info('--')
-    #     LOGGER.info(message.data.get('SkillName'))
-    #    LOGGER.info('--END LOGGING--')
-    #    search_skill = message.data.get('SkillName')
-    #    search_skill.replace('skill', '')
-    #    if "cancel" in search_skill:
-    #        self.stop_help_chat()
-    #    else:
-    #        for each_skill in self.skill_names:
-    #            if search_skill in each_skill:
-    #                self.skill_index = self.skill_names.index(each_skill)
-    #                self.read_search_help_item()
-    #            else:
-    #                self.speak_dialog('location.error', data={"result": search_skill}, expect_response=False)
-    #                wait_while_speaking()
-
-    @adds_context('HelpChat')
-    @removes_context('SearchChat')
     def next_help_item(self):
         self.skill_index += 1
         LOGGER.info('--LOG(next_help_item)--')
@@ -164,8 +163,6 @@ class HelpSkill(MycroftSkill):
             wait_while_speaking()
             self.stop_help_chat()
 
-    @adds_context('HelpChat')
-    @removes_context('SearchChat')
     def more_help_item(self):
         self.scrape_readme_file(self.skill_directories[self.skill_index])
         for phrase in self.example_list:
@@ -173,26 +170,17 @@ class HelpSkill(MycroftSkill):
             wait_while_speaking()
         self.next_help_item()
 
-    @removes_context('HelpChat')
-    @removes_context('SearchChat')
     def read_search_help_item(self):
         self.scrape_readme_file(self.skill_directories[self.skill_index])
         for phrase in self.example_list:
             self.speak_dialog('joining.words', data={"result": phrase}, expect_response=False)
             wait_while_speaking()
 
-    @removes_context('HelpChat')
-    # @adds_context('SearchChat')
-    def search_help_item(self):
-        request_skill = ""
-        # self.speak_dialog('search.for', expect_response=True)
+    def search_help_request_item(self):
         LOGGER.info('--LOG(search_help_item)--')
         request_skill = self.get_response('search.for')
+        wait_while_speaking()
         LOGGER.info('request_skill: ' + str(request_skill))
-
-#        if "cancel" in request_skill:
-#            self.stop_help_chat()
-#        else:
         if not request_skill:
             LOGGER.info('get_response returned NONE')
         else:
@@ -201,20 +189,8 @@ class HelpSkill(MycroftSkill):
                 if request_skill in each_skill:
                     self.skill_index = self.skill_names.index(each_skill)
                     self.read_search_help_item()
-                # else:
-                #    self.speak_dialog('location.error', data={"result": request_skill}, expect_response=False)
-                #    wait_while_speaking()
         LOGGER.info('--END LOGGING--')
 
-    @intent_handler(IntentBuilder('HelpChatCancelIntent').require("CancelKeyword").require('HelpChat')
-                    .build())
-    @removes_context('HelpChat')
-    @removes_context('SearchChat')
-    def handle_cancel_help_chat_intent(self,message):  # Cancel was spoken, Cancel the list navigation
-        self.speak_dialog('search.cancel', expect_response=False)
-
-    @removes_context('HelpChat')
-    @removes_context('SearchChat')
     def stop_help_chat(self):  # An internal conversational context stoppage was issued
         self.speak_dialog('search.stop', expect_response=False)
 
