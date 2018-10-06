@@ -178,18 +178,26 @@ class HelpSkill(MycroftSkill):
 
     def search_help_request_item(self):
         LOGGER.info('--LOG(search_help_item)--')
-        request_skill = self.get_response('search.for')
-        wait_while_speaking()
-        LOGGER.info('request_skill: ' + str(request_skill))
-        if not request_skill:
-            LOGGER.info('get_response returned NONE')
-        else:
-            for each_skill in self.skill_names:
-                LOGGER.info('Checking skill: ' + str(request_skill))
-                if request_skill in each_skill:
-                    self.skill_index = self.skill_names.index(each_skill)
-                    self.read_search_help_item()
-        LOGGER.info('--END LOGGING--')
+        self.set_context('HelpSearchContextKeyword', 'HelpSearchContext')
+        self.speak_dialog('search.for', expect_response=True)
+#        request_skill = self.get_response('search.for')
+#        LOGGER.info('request_skill: ' + str(request_skill))
+#        if not request_skill:
+#            LOGGER.info('get_response returned NONE')
+#        else:
+#            for each_skill in self.skill_names:
+#                LOGGER.info('Checking skill: ' + str(request_skill))
+#                if request_skill in each_skill:
+#                    self.skill_index = self.skill_names.index(each_skill)
+#                    self.read_search_help_item()
+#        LOGGER.info('--END LOGGING--')
+
+    @intent_handler(IntentBuilder('HelpSearchForIntent').require('HelpSearchContextKeyword')
+                    .require('SkillName').build())
+    def handle_help_search_for_intent(self, message):  # A decision was made other than Cancel
+        LOG.info('help search for')
+        skill_name_kw = message.data.get("SkillName")
+        LOG.info(skill_name_kw)
 
     def stop_help_chat(self):  # An internal conversational context stoppage was issued
         self.speak_dialog('search.stop', expect_response=False)
