@@ -175,8 +175,11 @@ class HelpSkill(MycroftSkill):
     def read_search_help_item(self):
         self.scrape_readme_file(self.skill_directories[self.skill_index])
         for phrase in self.example_list:
-            self.speak_dialog('example.phrases', data={"result": phrase}, expect_response=False)
-            wait_while_speaking()
+            try:
+                self.speak_dialog('example.phrases', data={"result": str(phrase)}, expect_response=False)
+                wait_while_speaking()
+            except Exception as e:
+                LOG.error(e)
         self.stop_help_chat()
 
 
@@ -214,7 +217,7 @@ class HelpSkill(MycroftSkill):
                     self.skill_index = self.skill_names.index(each_skill)
                     self.read_search_help_item()
         if not search_skill_found:
-            self.speak_dialog('skill.not.found', data={"result": request_skill}, expect_response=False)
+            self.speak_dialog('skill.not.found', data={"result": str(request_skill)}, expect_response=False)
             self.stop_help_chat()
 
     def stop_help_chat(self):  # An internal conversational context stoppage was issued
