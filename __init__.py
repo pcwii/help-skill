@@ -173,8 +173,10 @@ class HelpSkill(MycroftSkill):
     def read_search_help_item(self):
         self.scrape_readme_file(self.skill_directories[self.skill_index])
         for phrase in self.example_list:
-            self.speak_dialog('joining.words', data={"result": phrase}, expect_response=False)
+            self.speak_dialog('example.phrases', data={"result": phrase}, expect_response=False)
             wait_while_speaking()
+        self.stop_help_chat()
+
 
     def search_help_request_item(self):
         LOGGER.info('--LOG(search_help_item)--')
@@ -185,17 +187,23 @@ class HelpSkill(MycroftSkill):
                     .require('SkillName').build())
     def handle_help_search_for_intent(self, message):  # A decision was made other than Cancel
         self.set_context('HelpSearchContextKeyword', '')
+        self.set_context('HelpListContextKeyword', '')
         LOG.info('help search for')
         request_skill = message.data.get("SkillName")
         LOGGER.info('request_skill: ' + str(request_skill))
         if not request_skill:
             LOGGER.info('get_response returned NONE')
+            self.speak_dialog('skill.not.found',  data={"result": 'none'}, expect_response=False)
+            self.stop_help_chat()
         else:
             for each_skill in self.skill_names:
                 LOGGER.info('Checking skill: ' + str(request_skill))
                 if request_skill in each_skill:
                     self.skill_index = self.skill_names.index(each_skill)
                     self.read_search_help_item()
+                else:
+                    self.speak_dialog('skill.not.found', data={"result": request_skill}, expect_response=False)
+                    self.stop_help_chat()
 
     def stop_help_chat(self):  # An internal conversational context stoppage was issued
         self.speak_dialog('search.stop', expect_response=False)
