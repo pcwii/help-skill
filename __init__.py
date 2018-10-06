@@ -211,11 +211,11 @@ class HelpSkill(MycroftSkill):
                 LOGGER.info('Comparing skill: ' + str(request_skill) + ' : ' + str(each_skill))
                 LOGGER.info('List Compare: ' + str(message_words) + ' : ' + str(skill_words))
                 skill_match = bool(set(message_words).intersection(skill_words))
-                # if request_skill in each_skill:
                 if skill_match:
                     search_skill_found = True
                     self.skill_index = self.skill_names.index(each_skill)
                     self.read_search_help_item()
+                    break
         if not search_skill_found:
             self.speak_dialog('skill.not.found', data={"result": str(request_skill)}, expect_response=False)
             self.stop_help_chat()
