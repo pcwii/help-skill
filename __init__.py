@@ -186,7 +186,7 @@ class HelpSkill(MycroftSkill):
         self.speak_dialog('search.for', expect_response=True)
 
     @intent_handler(IntentBuilder('HelpSearchForIntent').require('HelpSearchContextKeyword')
-                    .require('SkillName').build())
+                    .require('SkillName').build())  # SkillName is a regex entry
     def handle_help_search_for_intent(self, message):  # A decision was made other than Cancel
         self.set_context('HelpSearchContextKeyword', '')
         self.set_context('HelpListContextKeyword', '')
