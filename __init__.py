@@ -85,13 +85,14 @@ class HelpSkill(MycroftSkill):
         self.skill_quantity = 0
         location = os.path.dirname(os.path.realpath(__file__))
         location = location + '/../'  # get skill parent directory path
+        LOG.info('NOTICE: get_skills_list will only get skills that contain "skill" in the name and '
+                 'are not "fallback" skills')
         for name in os.listdir(location):
             path = os.path.join(location, name)
             if os.path.isdir(path):  # if path item is a directory then process
                 if "fallback" not in name:
                     if "skill" in name:
-                        LOG.info('NOTICE: get_skills_list will only get skills that contain "skill" in the name and '
-                                 'are not "fallback" skills')
+                        LOG.info('Non-Fallback Skill Found: ' + str(name))
                         self.skill_directories.append(path)  # Directory path list
                         self.skill_names.append(name)  # Skill name list based on the path
         self.skill_quantity = len(self.skill_names)  # The number of skills detected
@@ -166,9 +167,10 @@ class HelpSkill(MycroftSkill):
     def more_help_item(self):
         self.scrape_readme_file(self.skill_directories[self.skill_index])
         for phrase in self.example_list:
-            self.speak_dialog('joining.words', data={"result": phrase}, expect_response=False)
+            self.speak_dialog('example.phrases', data={"result": phrase}, expect_response=False)
             wait_while_speaking()
-        self.next_help_item()
+        self.stop_help_chat()
+        # self.next_help_item()
 
     def read_search_help_item(self):
         self.scrape_readme_file(self.skill_directories[self.skill_index])
