@@ -75,7 +75,7 @@ class HelpSkill(MycroftSkill):
                 if len(self.example_list) > 0:  # The example section contained no information for this skill
                     LOG.info(str(self.example_list))
         else:
-            self.speak_dialog("location.error", expect_response=False)
+            self.speak_dialog("location.error")
             wait_while_speaking()
             self.stop_help_chat()
 
@@ -123,7 +123,7 @@ class HelpSkill(MycroftSkill):
         LOG.info('The user requested a cancel')
         self.set_context('HelpStartContextKeyword', '')
         self.skill_index = 0
-        self.speak_dialog('search.cancel', expect_response=False)
+        self.speak_dialog('search.cancel')
         wait_while_speaking()
 
     @intent_handler(IntentBuilder('HelpListCancelIntent').require('HelpListContextKeyword').require("CancelKeyword")
@@ -132,7 +132,7 @@ class HelpSkill(MycroftSkill):
         LOG.info('The user requested a cancel')
         self.set_context('HelpListContextKeyword', '')
         self.skill_index = 0
-        self.speak_dialog('search.cancel', expect_response=False)
+        self.speak_dialog('search.cancel')
         wait_while_speaking()
 
     @intent_handler(IntentBuilder('HelpChatDecisionIntent').require('HelpListContextKeyword')
@@ -160,7 +160,7 @@ class HelpSkill(MycroftSkill):
             self.speak_dialog('next.help', data={"result": self.skill_names[self.skill_index]}, expect_response=True)
             wait_while_speaking()
         else:
-            self.speak_dialog("search.end", expect_response=False)
+            self.speak_dialog("search.end")
             wait_while_speaking()
             self.stop_help_chat()
 
@@ -208,7 +208,7 @@ class HelpSkill(MycroftSkill):
                     self.stop_help_chat()
 
     def stop_help_chat(self):  # An internal conversational context stoppage was issued
-        self.speak_dialog('search.stop', expect_response=False)
+        self.speak_dialog('search.stop')
 
     def stop(self):
         pass
