@@ -184,6 +184,7 @@ class HelpSkill(MycroftSkill):
     @intent_handler(IntentBuilder('HelpSearchForIntent').require('HelpSearchContextKeyword')
                     .require('SkillName').build())
     def handle_help_search_for_intent(self, message):  # A decision was made other than Cancel
+        self.set_context('HelpSearchContextKeyword', '')
         LOG.info('help search for')
         request_skill = message.data.get("SkillName")
         LOGGER.info('request_skill: ' + str(request_skill))
