@@ -190,9 +190,13 @@ class HelpSkill(MycroftSkill):
     def handle_help_search_for_intent(self, message):  # A decision was made other than Cancel
         self.set_context('HelpSearchContextKeyword', '')
         self.set_context('HelpListContextKeyword', '')
+        message_words = []
+        skill_words = []
+        skill_match = False
         LOG.info('help search for')
         search_skill_found = False
         request_skill = message.data.get("SkillName")
+        message_words = str(request_skill).split()
         LOGGER.info('request_skill: ' + str(request_skill))
         if not request_skill:
             LOGGER.info('get_response returned NONE')
@@ -200,8 +204,12 @@ class HelpSkill(MycroftSkill):
             self.stop_help_chat()
         else:
             for each_skill in self.skill_names:
+                skill_words = str(each_skill).split('-')
                 LOGGER.info('Comparing skill: ' + str(request_skill) + ' : ' + str(each_skill))
-                if request_skill in each_skill:
+                LOGGER.info('List Compare: ' + str(message_words) + ' : ' + str(skill_words))
+                skill_match = bool(set(message_words).intersection(skill_words))
+                # if request_skill in each_skill:
+                if skill_match:
                     search_skill_found = True
                     self.skill_index = self.skill_names.index(each_skill)
                     self.read_search_help_item()
