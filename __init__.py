@@ -191,6 +191,7 @@ class HelpSkill(MycroftSkill):
         self.set_context('HelpSearchContextKeyword', '')
         self.set_context('HelpListContextKeyword', '')
         LOG.info('help search for')
+        search_skill_found = False
         request_skill = message.data.get("SkillName")
         LOGGER.info('request_skill: ' + str(request_skill))
         if not request_skill:
@@ -199,13 +200,14 @@ class HelpSkill(MycroftSkill):
             self.stop_help_chat()
         else:
             for each_skill in self.skill_names:
-                LOGGER.info('Checking skill: ' + str(request_skill))
+                LOGGER.info('Comparing skill: ' + str(request_skill) + ' : ' + str(each_skill))
                 if request_skill in each_skill:
+                    search_skill_found = True
                     self.skill_index = self.skill_names.index(each_skill)
                     self.read_search_help_item()
-                else:
-                    self.speak_dialog('skill.not.found', data={"result": request_skill}, expect_response=False)
-                    self.stop_help_chat()
+        if not search_skill_found:
+            self.speak_dialog('skill.not.found', data={"result": request_skill}, expect_response=False)
+            self.stop_help_chat()
 
     def stop_help_chat(self):  # An internal conversational context stoppage was issued
         self.speak_dialog('search.stop')
