@@ -211,7 +211,8 @@ class HelpSkill(MycroftSkill):
             self.stop_help_chat()
         else:
             for each_skill in self.skill_names:
-                skill_words = str(each_skill).split('-')
+                # skill_words = str(each_skill).split('-')
+                skill_words = re.findall(r"\w+", str(each_skill))
                 LOGGER.info('Comparing skill: ' + str(request_skill) + ' : ' + str(each_skill))
                 LOGGER.info('List Compare: ' + str(message_words) + ' : ' + str(skill_words))
                 skill_match = bool(set(message_words).intersection(skill_words))
