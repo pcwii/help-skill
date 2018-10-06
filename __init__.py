@@ -27,6 +27,7 @@ class HelpSkill(MycroftSkill):
         self.description_data = False
         self.description_list = []
         self.example_data = False
+        self.all_non_fallback = True
         self.example_list = []
         self.skill_directories = []
         self.skill_names = []
@@ -91,10 +92,15 @@ class HelpSkill(MycroftSkill):
             path = os.path.join(location, name)
             if os.path.isdir(path):  # if path item is a directory then process
                 if "fallback" not in name:
-                    if "skill" in name:
+                    if self.all_non_fallback:
                         LOG.info('Non-Fallback Skill Found: ' + str(name))
                         self.skill_directories.append(path)  # Directory path list
                         self.skill_names.append(name)  # Skill name list based on the path
+                    else:
+                        if "skill" in name:
+                            LOG.info('Non-Fallback Skill Found: ' + str(name))
+                            self.skill_directories.append(path)  # Directory path list
+                            self.skill_names.append(name)  # Skill name list based on the path
         self.skill_quantity = len(self.skill_names)  # The number of skills detected
 
     @intent_handler(IntentBuilder('HelpStartIntent').require("HelpKeyword")
@@ -170,7 +176,6 @@ class HelpSkill(MycroftSkill):
             self.speak_dialog('example.phrases', data={"result": phrase}, expect_response=False)
             wait_while_speaking()
         self.stop_help_chat()
-        # self.next_help_item()
 
     def read_search_help_item(self):
         self.scrape_readme_file(self.skill_directories[self.skill_index])
@@ -181,7 +186,6 @@ class HelpSkill(MycroftSkill):
             except Exception as e:
                 LOG.error(e)
         self.stop_help_chat()
-
 
     def search_help_request_item(self):
         LOGGER.info('--LOG(search_help_item)--')
