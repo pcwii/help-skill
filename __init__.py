@@ -103,6 +103,14 @@ class HelpSkill(MycroftSkill):
                             self.skill_names.append(name)  # Skill name list based on the path
         self.skill_quantity = len(self.skill_names)  # The number of skills detected
 
+    @intent_handler(IntentBuilder('CapabilitiesIntent').require("WhatHelpKeyword")
+                    .build())
+    def handle_capabilities_start_intent(self, message):  # The user requested help
+        LOG.info('Capabilities Help Initiated')
+        # self.set_context('HelpStartContextKeyword', 'HelpStartContext')
+        self.get_skills_list()
+        # self.speak_dialog('help.start', data={"result": str(self.skill_quantity)}, expect_response=True)
+
     @intent_handler(IntentBuilder('HelpStartIntent').require("HelpKeyword")
                     .build())
     def handle_help_start_intent(self, message):  # The user requested help
