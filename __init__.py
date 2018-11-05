@@ -9,6 +9,7 @@ from mycroft.util.log import LOG
 
 import re
 import os
+import random
 from pathlib import Path
 
 _author__ = 'PCWii'
@@ -105,11 +106,17 @@ class HelpSkill(MycroftSkill):
 
     @intent_handler(IntentBuilder('CapabilitiesIntent').require("WhatHelpKeyword")
                     .build())
-    def handle_capabilities_start_intent(self, message):  # The user requested help
+    def handle_capabilities_intent(self, message):  # The user requested help
         LOG.info('Capabilities Help Initiated')
-        # self.set_context('HelpStartContextKeyword', 'HelpStartContext')
         self.get_skills_list()
-        # self.speak_dialog('help.start', data={"result": str(self.skill_quantity)}, expect_response=True)
+        skill_number = random.randint(1, len(self.skill_directories))
+        self.scrape_readme_file(self.skill_directories[skill_number])
+        skill_name = self.skill_directories[skill_number]
+        LOG.info(skill_name)
+        for phrase in self.example_list:
+            self.speak_dialog('example.phrases', data={"result": phrase}, expect_response=False)
+            wait_while_speaking()
+        self.help_continue()
 
     @intent_handler(IntentBuilder('HelpStartIntent').require("HelpKeyword")
                     .build())
@@ -118,6 +125,13 @@ class HelpSkill(MycroftSkill):
         self.set_context('HelpStartContextKeyword', 'HelpStartContext')
         self.get_skills_list()
         self.speak_dialog('help.start', data={"result": str(self.skill_quantity)}, expect_response=True)
+
+    def help_continue(self):  # Check if we want to continue with the help skill
+        LOG.info('Help Continue Initiated')
+        self.set_context('HelpListContextKeyword', '')
+        self.set_context('HelpStartContextKeyword', 'HelpStartContext')
+        self.get_skills_list()
+        self.speak_dialog('help.continue', data={"result": str(self.skill_quantity)}, expect_response=True)
 
     @intent_handler(IntentBuilder('HelpChatYesIntent').require('HelpStartContextKeyword').require("YesKeyword")
                     .build())
@@ -133,7 +147,7 @@ class HelpSkill(MycroftSkill):
 
     @intent_handler(IntentBuilder('HelpChatNoIntent').require('HelpStartContextKeyword').require("CancelKeyword")
                     .build())
-    def handle_help_chat_no_intent(self, message):  # The user requires more help
+    def handle_help_chat_no_intent(self, message):
         LOG.info('The user requested a cancel')
         self.set_context('HelpStartContextKeyword', '')
         self.skill_index = 0
@@ -183,7 +197,9 @@ class HelpSkill(MycroftSkill):
         for phrase in self.example_list:
             self.speak_dialog('example.phrases', data={"result": phrase}, expect_response=False)
             wait_while_speaking()
-        self.stop_help_chat()
+        # Removed the stop after completed
+        # self.stop_help_chat()
+        self.help_continue()
 
     def read_search_help_item(self):
         self.scrape_readme_file(self.skill_directories[self.skill_index])
@@ -193,7 +209,9 @@ class HelpSkill(MycroftSkill):
                 wait_while_speaking()
             except Exception as e:
                 LOG.error(e)
-        self.stop_help_chat()
+        # Removed the stop after completed
+        # self.stop_help_chat()
+        self.help_continue()
 
     def search_help_request_item(self):
         LOGGER.info('--LOG(search_help_item)--')
