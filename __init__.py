@@ -240,6 +240,7 @@ class HelpSkill(MycroftSkill):
             short_list = random.sample(population=self.example_list, k=number_of_examples)
         else:
             short_list = self.example_list
+        LOGGER.info('short list =' + str(short_list))
         for phrase in short_list:
             try:
                 self.speak_dialog('example.phrases', data={"result": str(phrase)}, expect_response=False)
