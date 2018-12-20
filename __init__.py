@@ -237,7 +237,7 @@ class HelpSkill(MycroftSkill):
         number_of_examples = 3
         self.scrape_readme_file(self.skill_directories[self.skill_index])
         if len(self.example_list) > number_of_examples:
-            short_list = random.choices(population=self.example_list, k=number_of_examples)
+            short_list = random.sample(population=self.example_list, k=number_of_examples)
         else:
             short_list = self.example_list
         for phrase in short_list:
