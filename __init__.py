@@ -104,6 +104,38 @@ class HelpSkill(MycroftSkill):
                             self.skill_names.append(name)  # Skill name list based on the path
         self.skill_quantity = len(self.skill_names)  # The number of skills detected
 
+    def find_skill_index(self, skill_name):
+        self.set_context('HelpSearchContextKeyword', '')
+        self.set_context('HelpListContextKeyword', '')
+        message_words = []
+        skill_words = []
+        skill_match = False
+        LOG.info('Find Skill Index')
+        self.get_skills_list()  # retrieves the self.skill_names()
+        search_skill_found = False
+        request_skill = skill_name
+        message_words = str(request_skill).split()
+        LOGGER.info('request_skill: ' + str(request_skill))
+        if not request_skill:
+            LOGGER.info('get_response returned NONE')
+            self.speak_dialog('skill.not.found',  data={"result": 'none'}, expect_response=False)
+            self.stop_help_chat()
+        else:
+            for each_skill in self.skill_names:
+                skill_words = re.findall(r"\w+", str(each_skill))
+                LOGGER.info('Comparing skill: ' + str(request_skill) + ' : ' + str(each_skill))
+                LOGGER.info('List Compare: ' + str(message_words) + ' : ' + str(skill_words))
+                skill_match = bool(set(message_words).intersection(skill_words))
+                if skill_match:
+                    search_skill_found = True
+                    found_index = self.skill_names.index(each_skill)
+                    # self.read_search_help_item()
+                    return found_index
+                    # break
+        if not search_skill_found:
+            self.speak_dialog('skill.not.found', data={"result": str(request_skill)}, expect_response=False)
+            self.stop_help_chat()
+
     @intent_handler(IntentBuilder('CapabilitiesIntent').require("WhatHelpKeyword")
                     .build())
     def handle_capabilities_intent(self, message):  # The user requested help
@@ -202,8 +234,13 @@ class HelpSkill(MycroftSkill):
         self.help_continue()
 
     def read_search_help_item(self):
+        number_of_examples = 3
         self.scrape_readme_file(self.skill_directories[self.skill_index])
-        for phrase in self.example_list:
+        if len(self.example_list) > number_of_examples:
+            short_list = random.choices(population=self.example_list, k=number_of_examples)
+        else:
+            short_list = self.example_list
+        for phrase in short_list:
             try:
                 self.speak_dialog('example.phrases', data={"result": str(phrase)}, expect_response=False)
                 wait_while_speaking()
