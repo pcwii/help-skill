@@ -17,7 +17,6 @@ _author__ = 'PCWii'
 
 LOGGER = getLogger(__name__)
 
-
 class HelpSkill(MycroftSkill):
     """
     Scrapes the skills directory to provide conversational help on installed skills
@@ -138,21 +137,22 @@ class HelpSkill(MycroftSkill):
 
     @intent_handler(IntentBuilder('CapabilitiesIntent').require("WhatHelpKeyword")
                     .build())
-    def handle_capabilities_intent(self, message):  # The user requested help
+    def handle_capabilities_intent(self, message):  # The user requested help "what can you do"
         LOG.info('Capabilities Help Initiated')
         self.get_skills_list()
         skill_number = random.randint(1, len(self.skill_directories))
         self.scrape_readme_file(self.skill_directories[skill_number])
         skill_name = self.skill_directories[skill_number]
         LOG.info(skill_name)
-        for phrase in self.example_list:
-            self.speak_dialog('example.phrases', data={"result": phrase}, expect_response=False)
-            wait_while_speaking()
+        phrase = random.choice(self.example_list)
+        #for phrase in self.example_list:
+        self.speak_dialog('example.phrases', data={"result": phrase}, expect_response=False)
+        wait_while_speaking()
         self.help_continue()
 
     @intent_handler(IntentBuilder('HelpStartIntent').require("HelpKeyword")
                     .build())
-    def handle_help_start_intent(self, message):  # The user requested help
+    def handle_help_start_intent(self, message):  # The user requested help "Help!
         LOG.info('Help Skill Initiated')
         self.set_context('HelpStartContextKeyword', 'HelpStartContext')
         self.get_skills_list()
@@ -226,9 +226,10 @@ class HelpSkill(MycroftSkill):
 
     def more_help_item(self):
         self.scrape_readme_file(self.skill_directories[self.skill_index])
-        for phrase in self.example_list:
-            self.speak_dialog('example.phrases', data={"result": phrase}, expect_response=False)
-            wait_while_speaking()
+        #for phrase in self.example_list:
+        phrase = random.choice(self.example_list)
+        self.speak_dialog('example.phrases', data={"result": phrase}, expect_response=False)
+        wait_while_speaking()
         # Removed the stop after completed
         # self.stop_help_chat()
         self.help_continue()
@@ -241,12 +242,13 @@ class HelpSkill(MycroftSkill):
         else:
             short_list = self.example_list
         LOGGER.info('short list =' + str(short_list))
-        for phrase in short_list:
-            try:
-                self.speak_dialog('example.phrases', data={"result": str(phrase)}, expect_response=False)
-                wait_while_speaking()
-            except Exception as e:
-                LOG.error(e)
+        #for phrase in short_list:
+        phrase = random.choice(short_list)
+        try:
+            self.speak_dialog('example.phrases', data={"result": str(phrase)}, expect_response=False)
+            wait_while_speaking()
+        except Exception as e:
+            LOG.error(e)
         # Removed the stop after completed
         # self.stop_help_chat()
         self.help_continue()
