@@ -6,6 +6,7 @@ from mycroft.util.log import getLogger
 from mycroft.skills.context import adds_context, removes_context
 from mycroft.audio import wait_while_speaking
 from mycroft.util.log import LOG
+from msm import MycroftSkillsManager
 
 import re
 import os
@@ -293,6 +294,13 @@ class HelpSkill(MycroftSkill):
 
     def stop_help_chat(self):  # An internal conversational context stoppage was issued
         self.speak_dialog('search.stop')
+
+    @intent_handler(IntentBuilder('SearchSkillsIntent').require('ListKeyword')
+                    .require('SkillsKeyword').build())  # SkillName is a regex entry
+    def handle_search_skills_intent(self, message):  # A decision was made other than Cancel
+        m = MycroftSkillsManager()
+        installed_skills = [s for s in m.list() if s.is_local]
+        LOGGER.info('Found the following Skills: '+str(installed_skills))
 
     def stop(self):
         pass
